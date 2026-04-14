@@ -145,37 +145,53 @@ async function validateDomains() {
   progressFill.style.width = '0%';
 
   try {
-    const response = await fetch('/api/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ domains: state.domains })
-    });
+    let completed = 0;
+    
+    for (const domain of state.domains) {
+      progressText.textContent = `Validating ${escapeHtml(domain)}... (${completed + 1}/${state.domains.length})`;
+      
+      try {
+        const response = await fetch('/api/validate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ domains: [domain] })
+        });
 
-    const data = await response.json();
+        const data = await response.json();
 
-    if (data.success) {
-      state.results = data.results;
-
-      // Animate progress
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 2;
-        progressFill.style.width = `${Math.min(progress, 100)}%`;
-        progressText.textContent = `Processing ${state.domains.length} domain(s)...`;
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            progressContainer.classList.remove('active');
-            renderResults();
-          }, 500);
+        if (data.success && data.results.length > 0) {
+          const result = data.results[0];
+          state.results.push(result);
+          
+          // Determine if the domain was successfully reached
+          const isDown = !result.ssl.success && !result.cookies.success && (!result.hsts || !result.hsts.success);
+          
+          if (isDown) {
+            showNotification(`[Failed] Cannot access ${domain}`, 'error');
+          } else {
+            showNotification(`[Success] Validated ${domain}`, 'success');
+          }
+          
+          renderResults();
+        } else {
+          throw new Error(data.error || `Validation failed for ${domain}`);
         }
-      }, 20);
-    } else {
-      throw new Error(data.error || 'Validation failed');
+      } catch (domainError) {
+        console.error(`Error for ${domain}:`, domainError);
+        showNotification(`[Error] Failed to process ${domain}`, 'error');
+      }
+      
+      completed++;
+      const percent = (completed / state.domains.length) * 100;
+      progressFill.style.width = `${percent}%`;
     }
+    
+    setTimeout(() => {
+      progressContainer.classList.remove('active');
+    }, 1000);
+    
   } catch (error) {
     console.error('Validation error:', error);
     showNotification(`Error: ${error.message}`, 'error');
@@ -194,7 +210,37 @@ function renderResults() {
     return;
   }
 
-  resultsGrid.innerHTML = state.results.map(result => `
+  resultsGrid.innerHTML = state.results.map(result => {
+    // Check if the domain is completely unreachable
+    const isDown = !result.ssl.success && !result.cookies.success && (!result.hsts || !result.hsts.success);
+    
+    if (isDown) {
+      const errorMsg = result.ssl.error || result.cookies.error || (result.hsts && result.hsts.error) || 'Failed to connect to the domain.';
+      return `
+    <div class="result-card collapsed" style="border-left-color: #ef4444;">
+      <div class="result-header" onclick="toggleDomain(this)">
+        <div class="result-header-content">
+          <div class="result-domain" style="color: #ef4444;">
+            <i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(result.domain)} (Unreachable)
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div class="result-timestamp">Checked: ${new Date(result.timestamp).toLocaleString()}</div>
+          <span class="result-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+        </div>
+      </div>
+      <div class="result-body">
+        <div class="check-section" style="padding: 1rem; color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 8px; margin-top: 1rem;">
+            <strong><i class="fa-solid fa-ban"></i> Connection Failed</strong><br/>
+            ${escapeHtml(errorMsg)}
+            <p style="margin-top: 0.5rem; font-size: 0.85em; color: var(--text-secondary);">The target domain might be offline, requires a DNS fix, or you are facing network issues.</p>
+        </div>
+      </div>
+    </div>
+      `;
+    }
+
+    return `
     <div class="result-card collapsed">
       <div class="result-header" onclick="toggleDomain(this)">
         <div class="result-header-content">
@@ -211,7 +257,8 @@ function renderResults() {
         ${result.hsts ? renderHSTSSection(result.hsts) : ''}
       </div>
     </div>
-  `).join('');
+    `;
+  }).join('');
 
   exportJsonBtn.style.display = 'inline-flex';
   updateStats();

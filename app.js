@@ -217,23 +217,30 @@ function renderResults() {
     if (isDown) {
       const errorMsg = result.ssl.error || result.cookies.error || (result.hsts && result.hsts.error) || 'Failed to connect to the domain.';
       return `
-    <div class="result-card collapsed" style="border-left-color: #ef4444;">
-      <div class="result-header" onclick="toggleDomain(this)">
+    <div class="result-card collapsed" style="border-color: var(--accent-danger, #8b0000); box-shadow: 6px 6px 0px var(--accent-danger, #8b0000);">
+      <div class="result-header" onclick="toggleDomain(this)" style="border-bottom-color: var(--accent-danger, #8b0000);">
         <div class="result-header-content">
-          <div class="result-domain" style="color: #ef4444;">
-            <i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(result.domain)} (Unreachable)
+          <div class="result-domain" style="color: var(--accent-danger, #8b0000);">
+            <i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(result.domain)} 
+            <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; background: var(--accent-danger, #8b0000); color: var(--bg-secondary, #ffffff); padding: 0.2rem 0.5rem; margin-left: 0.5rem; border: 2px solid var(--border-color, #1a1a1a);">Offline</span>
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 1rem;">
           <div class="result-timestamp">Checked: ${new Date(result.timestamp).toLocaleString()}</div>
-          <span class="result-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+          <span class="result-toggle" style="color: var(--accent-danger, #8b0000);"><i class="fa-solid fa-chevron-down"></i></span>
         </div>
       </div>
       <div class="result-body">
-        <div class="check-section" style="padding: 1rem; color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 8px; margin-top: 1rem;">
-            <strong><i class="fa-solid fa-ban"></i> Connection Failed</strong><br/>
-            ${escapeHtml(errorMsg)}
-            <p style="margin-top: 0.5rem; font-size: 0.85em; color: var(--text-secondary);">The target domain might be offline, requires a DNS fix, or you are facing network issues.</p>
+        <div class="check-section" style="padding: 1.5rem; color: var(--text-primary); background: var(--bg-secondary); border: 3px solid var(--accent-danger, #8b0000); border-radius: 0px; box-shadow: 4px 4px 0px var(--accent-danger, #8b0000); margin-top: 1rem; margin-bottom: 0.5rem;">
+            <div style="font-weight: 800; text-transform: uppercase; font-size: 1.25rem; color: var(--accent-danger, #8b0000); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-ban"></i> Connection Failed
+            </div>
+            <div style="font-weight: 600; font-family: monospace; background: var(--bg-tertiary); padding: 0.75rem; border: 2px solid var(--border-color); margin-bottom: 1rem; word-break: break-all;">
+                > ${escapeHtml(errorMsg)}
+            </div>
+            <p style="font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); border-top: 2px dashed var(--accent-danger, #8b0000); padding-top: 0.75rem;">
+                The target domain might be offline, requires a DNS fix, or you are facing network connectivity issues.
+            </p>
         </div>
       </div>
     </div>

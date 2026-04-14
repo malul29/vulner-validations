@@ -183,7 +183,7 @@ async function validateDomains() {
   } finally {
     state.isValidating = false;
     validateBtn.disabled = false;
-    validateBtn.innerHTML = '🔍 Validate All Domains';
+    validateBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Validate';
   }
 }
 
@@ -198,11 +198,11 @@ function renderResults() {
     <div class="result-card collapsed">
       <div class="result-header" onclick="toggleDomain(this)">
         <div class="result-header-content">
-          <div class="result-domain">🌐 ${escapeHtml(result.domain)}</div>
+          <div class="result-domain"><i class="fa-solid fa-globe"></i> ${escapeHtml(result.domain)}</div>
         </div>
         <div style="display: flex; align-items: center; gap: 1rem;">
           <div class="result-timestamp">Checked: ${new Date(result.timestamp).toLocaleString()}</div>
-          <span class="result-toggle">▼</span>
+          <span class="result-toggle"><i class="fa-solid fa-chevron-down"></i></span>
         </div>
       </div>
       <div class="result-body">
@@ -226,10 +226,10 @@ function renderSSLSection(ssl) {
     <div class="check-section collapsed">
       <div class="check-title" onclick="toggleSection(this)">
         <div class="check-title-content">
-          🔒 SSL Certificate
+          <i class="fa-solid fa-lock"></i> SSL Certificate
           <span class="status-badge ${severityClass}">${ssl.status || 'Unknown'}</span>
         </div>
-        <span class="check-toggle">▼</span>
+        <span class="check-toggle"><i class="fa-solid fa-chevron-down"></i></span>
       </div>
       <div class="check-details-wrapper">
         ${ssl.success ? `
@@ -276,10 +276,10 @@ function renderCookieSection(cookies) {
     <div class="check-section collapsed">
       <div class="check-title" onclick="toggleSection(this)">
         <div class="check-title-content">
-          🍪 Cookie Security
+          <i class="fa-solid fa-cookie-bite"></i> Cookie Security
           <span class="status-badge ${severityClass}">${cookies.status || 'Unknown'}</span>
         </div>
-        <span class="check-toggle">▼</span>
+        <span class="check-toggle"><i class="fa-solid fa-chevron-down"></i></span>
       </div>
       <div class="check-details-wrapper">
         ${cookies.success ? `
@@ -301,7 +301,7 @@ function renderCookieSection(cookies) {
             <div class="issue-list">
               ${cookies.issues.map(issue => `
                 <div class="issue-item">
-                  <div class="issue-cookie">🔴 ${escapeHtml(issue.name)}</div>
+                  <div class="issue-cookie"><i class="fa-solid fa-circle-exclamation" style="color: #ef4444;"></i> ${escapeHtml(issue.name)}</div>
                   <div class="issue-problems">
                     ${issue.issues.map(i => `<span>${escapeHtml(i)}</span>`).join('')}
                   </div>
@@ -330,10 +330,10 @@ function renderHSTSSection(hsts) {
     <div class="check-section collapsed">
       <div class="check-title" onclick="toggleSection(this)">
         <div class="check-title-content">
-          🛡️ HSTS Policy
+          <i class="fa-solid fa-shield-halved"></i> HSTS Policy
           <span class="status-badge ${severityClass}">${hsts.status || 'Unknown'}</span>
         </div>
-        <span class="check-toggle">▼</span>
+        <span class="check-toggle"><i class="fa-solid fa-chevron-down"></i></span>
       </div>
       <div class="check-details-wrapper">
         ${hsts.success ? `
@@ -365,7 +365,7 @@ function renderHSTSSection(hsts) {
             <div class="issue-list">
               ${hsts.details.issues.map(issue => `
                 <div class="issue-item">
-                  <div class="issue-cookie">⚠️ ${escapeHtml(issue)}</div>
+                  <div class="issue-cookie"><i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> ${escapeHtml(issue)}</div>
                 </div>
               `).join('')}
             </div>

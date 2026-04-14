@@ -466,19 +466,48 @@ function showNotification(message, type = 'info') {
 
   // Optionally, you could create a toast notification element here
   const notification = document.createElement('div');
+  // Use retro neo-brutalism styling consistently
   notification.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
-    background: ${type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#10b981'};
-    color: white;
+    background: ${type === 'error' ? 'var(--bg-secondary, #ffffff)' : type === 'warning' ? 'var(--bg-secondary, #ffffff)' : 'var(--bg-secondary, #ffffff)'};
+    color: var(--text-primary, #1a1a1a);
     padding: 1rem 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    border: 3px solid var(--border-color, #1a1a1a);
+    border-radius: 0px;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     animation: slideInRight 0.3s ease;
   `;
-  notification.textContent = message;
+
+  // Add icon based on type
+  const icon = document.createElement('i');
+  if (type === 'error') {
+    icon.className = 'fa-solid fa-circle-xmark';
+    icon.style.color = 'var(--accent-danger, #8b0000)';
+    icon.style.fontSize = '1.25rem';
+  } else if (type === 'warning') {
+    icon.className = 'fa-solid fa-triangle-exclamation';
+    icon.style.color = 'var(--accent-warning, #8b4513)';
+    icon.style.fontSize = '1.25rem';
+  } else {
+    icon.className = 'fa-solid fa-circle-check';
+    icon.style.color = 'var(--accent-success, #2d5016)';
+    icon.style.fontSize = '1.25rem';
+  }
+
+  const textNode = document.createElement('span');
+  textNode.textContent = message;
+
+  notification.appendChild(icon);
+  notification.appendChild(textNode);
   document.body.appendChild(notification);
 
   setTimeout(() => {

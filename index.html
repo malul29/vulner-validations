@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Security Validator - Check SSL certificates and cookie security across multiple domains">
+  <meta name="keywords" content="ssl, cookies, hsts validator">
+  <title>Vulnerability Validator - SSL, HSTS & Cookie Security Checker</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Top Navigation Bar -->
+  <div class="top-bar">
+    <div class="top-bar-content">
+      <div class="logo">
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <span></span>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value" id="totalDomains">0</div>
+          <div class="stat-label">Domains</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="totalScanned">0</div>
+          <div class="stat-label">Scanned</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1 class="header-title">Vulnerability Validator</h1>
+      <p class="header-subtitle">SSL, Cookie & HSTS Validation Tool</p>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <div class="main-grid">
+      <!-- Left Panel - Input Section -->
+      <div class="left-panel">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="card-icon">📋</span>
+              Domain Management
+            </h2>
+            <p class="card-description">Add domains to validate SSL certificates and cookie security</p>
+          </div>
+
+          <div class="input-group">
+            <label for="domainInput" class="input-label">Add Domains</label>
+            <p class="input-hint">Enter one or more domains (one per line for multiple)</p>
+            <textarea id="domainInput" class="input-field input-textarea"
+              placeholder="example.com&#10;google.com&#10;github.com&#10;..."></textarea>
+            <button id="addDomainBtn" class="btn btn-primary" style="margin-top: 0.75rem;">
+              ➕ Add Domain(s)
+            </button>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Domains Queue</label>
+            <div id="domainList" class="domain-list">
+              <div class="empty-state">No domains added yet</div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="validateBtn" class="btn btn-primary" disabled>
+              🔍 Validate
+            </button>
+            <button id="clearBtn" class="btn btn-danger" disabled>
+              🗑️ Clear
+            </button>
+          </div>
+
+          <!-- Progress Bar -->
+          <div id="progressContainer" class="progress-container">
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="progressText" class="progress-text">Processing...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel - Results Section -->
+      <div class="right-panel">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">
+              <span class="card-icon">📊</span>
+              Validation Results
+            </h2>
+            <p class="card-description">Detailed security analysis for each domain</p>
+          </div>
+
+          <div id="resultsGrid" class="results-grid">
+            <div class="empty-state">Run validation to see results here</div>
+          </div>
+
+          <div class="actions" style="margin-top: 1.5rem;">
+            <button id="exportJsonBtn" class="btn btn-success" style="display: none; grid-column: span 2;">
+              📥 Export Results (JSON)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

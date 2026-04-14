@@ -1,0 +1,66 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Development & Testing
+test-api.js
+*.test.js
+*.spec.js
+coverage/
+
+# Documentation (not needed in container)
+README.md
+*.md
+!DEPLOY_DOCKER.md
+
+# Deployment configs for other platforms
+Procfile
+vercel.json
+ecosystem.config.js
+nginx.conf.example
+
+# Build artifacts
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+
+# Security
+*.pem
+*.key
+*.cert

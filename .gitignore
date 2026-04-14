@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log
+yarn-error.log
+.env
+.DS_Store
+*.log
+.vscode/
+.idea/
+test-api.js
+
+# VPS deployment files
+logs/
+*.pem
+*.key

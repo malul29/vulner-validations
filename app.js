@@ -144,6 +144,20 @@ async function validateDomains() {
   progressContainer.classList.add('active');
   progressFill.style.width = '0%';
 
+  const checks = [];
+  if (document.getElementById('checkSsl').checked) checks.push('ssl');
+  if (document.getElementById('checkCookies').checked) checks.push('cookies');
+  if (document.getElementById('checkHsts').checked) checks.push('hsts');
+
+  if (checks.length === 0) {
+      showNotification('Please select at least one check to perform', 'warning');
+      state.isValidating = false;
+      validateBtn.disabled = false;
+      validateBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Validate';
+      progressContainer.classList.remove('active');
+      return;
+  }
+
   try {
     let completed = 0;
     
@@ -156,7 +170,7 @@ async function validateDomains() {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ domains: [domain] })
+          body: JSON.stringify({ domains: [domain], checks })
         });
 
         const data = await response.json();
@@ -166,7 +180,11 @@ async function validateDomains() {
           state.results.push(result);
           
           // Determine if the domain was successfully reached
-          const isDown = !result.ssl.success && !result.cookies.success && (!result.hsts || !result.hsts.success);
+          const isDown = 
+            (result.ssl.skipped || !result.ssl.success) && 
+            (result.cookies.skipped || !result.cookies.success) && 
+            (!result.hsts || result.hsts.skipped || !result.hsts.success) &&
+            (!result.ssl.skipped || !result.cookies.skipped || !result.hsts.skipped); // Make sure we didn't just skip everything
           
           if (isDown) {
             showNotification(`[Failed] Cannot access ${domain}`, 'error');
@@ -212,7 +230,11 @@ function renderResults() {
 
   resultsGrid.innerHTML = state.results.map(result => {
     // Check if the domain is completely unreachable
-    const isDown = !result.ssl.success && !result.cookies.success && (!result.hsts || !result.hsts.success);
+    const isDown = 
+      (result.ssl.skipped || !result.ssl.success) && 
+      (result.cookies.skipped || !result.cookies.success) && 
+      (!result.hsts || result.hsts.skipped || !result.hsts.success) &&
+      (!result.ssl.skipped || !result.cookies.skipped || (!result.hsts || !result.hsts.skipped));
     
     if (isDown) {
       const errorMsg = result.ssl.error || result.cookies.error || (result.hsts && result.hsts.error) || 'Failed to connect to the domain.';
@@ -259,9 +281,9 @@ function renderResults() {
         </div>
       </div>
       <div class="result-body">
-        ${renderSSLSection(result.ssl)}
-        ${renderCookieSection(result.cookies)}
-        ${result.hsts ? renderHSTSSection(result.hsts) : ''}
+        ${result.ssl && !result.ssl.skipped ? renderSSLSection(result.ssl) : ''}
+        ${result.cookies && !result.cookies.skipped ? renderCookieSection(result.cookies) : ''}
+        ${result.hsts && !result.hsts.skipped ? renderHSTSSection(result.hsts) : ''}
       </div>
     </div>
     `;

@@ -120,7 +120,7 @@ app.get('/api/debug/:domain', async (req, res) => {
 // Validate multiple domains (batch processing)
 app.post('/api/validate', async (req, res) => {
     try {
-        const { domains } = req.body;
+        const { domains, checks } = req.body;
 
         if (!domains || !Array.isArray(domains) || domains.length === 0) {
             return res.status(400).json({
@@ -129,22 +129,38 @@ app.post('/api/validate', async (req, res) => {
             });
         }
 
+        const runChecks = checks || ['ssl', 'cookies', 'hsts'];
         const results = [];
 
         for (const domain of domains) {
-            const [sslResult, cookieResult, hstsResult] = await Promise.all([
-                checkSSL(domain),
-                checkCookies(domain),
-                checkHSTS(domain)
-            ]);
+            const checksToRun = [];
+            
+            if (runChecks.includes('ssl')) {
+                checksToRun.push(checkSSL(domain).then(res => ({ type: 'ssl', data: res })));
+            }
+            if (runChecks.includes('cookies')) {
+                checksToRun.push(checkCookies(domain).then(res => ({ type: 'cookies', data: res })));
+            }
+            if (runChecks.includes('hsts')) {
+                checksToRun.push(checkHSTS(domain).then(res => ({ type: 'hsts', data: res })));
+            }
 
-            results.push({
+            const checkResults = await Promise.all(checksToRun);
+            
+            const domainResult = {
                 domain: domain,
-                ssl: sslResult,
-                cookies: cookieResult,
-                hsts: hstsResult,
                 timestamp: new Date().toISOString()
+            };
+            
+            checkResults.forEach(res => {
+                domainResult[res.type] = res.data;
             });
+            
+            if (!runChecks.includes('ssl')) domainResult.ssl = { success: null, skipped: true };
+            if (!runChecks.includes('cookies')) domainResult.cookies = { success: null, skipped: true };
+            if (!runChecks.includes('hsts')) domainResult.hsts = { success: null, skipped: true };
+
+            results.push(domainResult);
         }
 
         res.json({

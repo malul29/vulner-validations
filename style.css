@@ -26,7 +26,7 @@
   --shadow-lg: 8px 8px 0px rgba(0, 0, 0, 1);
 
   --border-width: 3px;
-  --border-radius: 0px;
+  --border-radius: 16px; /* Sudut tumpul */
 
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s ease;
@@ -74,7 +74,7 @@ body::before {
 .top-bar {
   background: var(--bg-secondary);
   border-bottom: var(--border-width) solid var(--border-color);
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -93,7 +93,7 @@ body::before {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--text-primary);
   text-transform: uppercase;
@@ -101,7 +101,7 @@ body::before {
 }
 
 .logo-img {
-  height: 40px;
+  height: 28px;
   width: auto;
   object-fit: contain;
   filter: brightness(0);
@@ -120,6 +120,7 @@ body::before {
   padding: 0.5rem 1rem;
   border: 2px solid var(--border-color);
   background: var(--bg-primary);
+  border-radius: var(--border-radius);
 }
 
 .stat-value {
@@ -141,11 +142,11 @@ body::before {
 /* Header */
 header {
   text-align: center;
-  margin: 3rem 0 2rem 0;
+  margin: 1.5rem 0 1.5rem 0;
 }
 
 .header-title {
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
@@ -184,6 +185,7 @@ header {
 .card {
   background: var(--bg-secondary);
   border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
   padding: 1.75rem;
   margin-bottom: 1.5rem;
   box-shadow: var(--shadow-md);
@@ -224,6 +226,7 @@ header {
   font-size: 1.125rem;
   font-weight: 800;
   border: 2px solid var(--border-color);
+  border-radius: 50%;
 }
 
 .card-description {
@@ -252,6 +255,7 @@ header {
   padding: 0.875rem 1rem;
   background: var(--bg-primary);
   border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
   color: var(--text-primary);
   font-size: 0.95rem;
   font-family: 'Space Grotesk', sans-serif;
@@ -291,6 +295,7 @@ header {
   width: 100%;
   padding: 1rem 1.5rem;
   border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
   font-size: 0.95rem;
   font-weight: 700;
   font-family: 'Space Grotesk', sans-serif;
@@ -355,6 +360,7 @@ header {
   padding: 1rem;
   background: var(--bg-primary);
   border: 2px solid var(--border-color-subtle);
+  border-radius: var(--border-radius);
 }
 
 .domain-list::-webkit-scrollbar {
@@ -364,11 +370,13 @@ header {
 .domain-list::-webkit-scrollbar-track {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color-subtle);
+  border-radius: var(--border-radius);
 }
 
 .domain-list::-webkit-scrollbar-thumb {
   background: var(--text-primary);
   border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
 }
 
 .domain-tag {
@@ -378,6 +386,7 @@ header {
   padding: 0.5rem 0.875rem;
   background: var(--bg-secondary);
   border: 2px solid var(--border-color);
+  border-radius: calc(var(--border-radius) / 2);
   color: var(--text-primary);
   font-size: 0.85rem;
   font-family: 'Consolas', monospace;
@@ -387,6 +396,7 @@ header {
 .domain-tag .remove-btn {
   background: var(--bg-primary);
   border: 2px solid var(--border-color);
+  border-radius: 50%;
   color: var(--accent-danger);
   width: 20px;
   height: 20px;
@@ -412,6 +422,7 @@ header {
   text-align: center;
   background: transparent;
   border: 2px dashed var(--border-color-light);
+  border-radius: var(--border-radius);
   font-weight: 500;
 }
 
@@ -442,6 +453,7 @@ header {
   height: 24px;
   background: var(--bg-primary);
   border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
   overflow: hidden;
   position: relative;
 }
@@ -490,6 +502,7 @@ header {
 .result-card {
   background: var(--bg-secondary);
   border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius);
   overflow: hidden;
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-sm);
@@ -622,6 +635,7 @@ header {
   gap: 0.25rem;
   padding: 0.4rem 0.75rem;
   border: 2px solid var(--border-color);
+  border-radius: calc(var(--border-radius) / 2);
   font-size: 0.7rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -667,6 +681,7 @@ header {
   padding: 1.25rem;
   margin: 0 1.25rem 1.25rem 1.25rem;
   border: 2px solid var(--border-color-subtle);
+  border-radius: calc(var(--border-radius) / 2);
   font-size: 0.875rem;
 }
 
@@ -706,6 +721,7 @@ header {
   background: var(--bg-secondary);
   border-left: 4px solid var(--accent-danger);
   border: 2px solid var(--accent-danger);
+  border-radius: calc(var(--border-radius) / 2);
   padding: 0.75rem;
   margin-bottom: 0.5rem;
 }
@@ -734,6 +750,7 @@ header {
   color: var(--accent-danger);
   padding: 0.25rem 0.5rem;
   border: 2px solid var(--accent-danger);
+  border-radius: calc(var(--border-radius) / 4);
   margin-right: 0.35rem;
   margin-bottom: 0.25rem;
   font-size: 0.7rem;
@@ -748,6 +765,7 @@ header {
   height: 16px;
   border: 3px solid var(--border-color-subtle);
   border-top-color: var(--text-primary);
+  border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 

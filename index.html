@@ -66,6 +66,24 @@
           </div>
 
           <div class="input-group">
+            <label class="input-label">Select Checks</label>
+            <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; background: var(--bg-primary); border: 2px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius);">
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+                <input type="checkbox" id="checkSsl" value="ssl" checked style="width: 1.2rem; height: 1.2rem; accent-color: var(--text-primary);">
+                <span>SSL Certificate</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+                <input type="checkbox" id="checkCookies" value="cookies" checked style="width: 1.2rem; height: 1.2rem; accent-color: var(--text-primary);">
+                <span>Cookie Security</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+                <input type="checkbox" id="checkHsts" value="hsts" checked style="width: 1.2rem; height: 1.2rem; accent-color: var(--text-primary);">
+                <span>HSTS Header</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="input-group">
             <label class="input-label">Domains Queue</label>
             <div id="domainList" class="domain-list">
               <div class="empty-state">No domains added yet</div>

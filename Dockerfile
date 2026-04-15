@@ -1,46 +1,21 @@
-# Multi-stage Dockerfile for Vulner-Validator
-# Stage 1: Build stage
-FROM node:18-alpine AS builder
+# Gunakan Node.js versi LTS berbasis Alpine Linux agar ukuran image kecil dan ringan
+FROM node:20-alpine
 
+# Tentukan direktori kerja di dalam container
 WORKDIR /app
 
-# Copy package files
+# Salin file package.json dan package-lock.json terlebih dahulu
+# Ini memanfaatkan layer caching Docker agar npm install tidak dijalankan ulang jika tidak ada perubahan dependensi
 COPY package*.json ./
 
-# Install dependencies
+# Install dependensi (hanya dependency utama untuk production)
 RUN npm ci --only=production
 
-# Stage 2: Production stage
-FROM node:18-alpine
+# Salin seluruh sisa file proyek ke dalam direktori kerja container
+COPY . .
 
-# Set working directory
-WORKDIR /app
-
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-# Copy dependencies from builder
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-
-# Copy application files
-COPY --chown=nodejs:nodejs . .
-
-# Switch to non-root user
-USER nodejs
-
-# Expose port
+# Ekspos port 3000 yang digunakan oleh server Express Node.js
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
-
-# Use dumb-init to handle signals properly
-ENTRYPOINT ["dumb-init", "--"]
-
-# Start application
+# Perintah untuk menjalankan aplikasi saat container dijalankan
 CMD ["node", "server.js"]

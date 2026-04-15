@@ -148,6 +148,7 @@ async function validateDomains() {
   if (document.getElementById('checkSsl').checked) checks.push('ssl');
   if (document.getElementById('checkCookies').checked) checks.push('cookies');
   if (document.getElementById('checkHsts').checked) checks.push('hsts');
+  if (document.getElementById('checkCsp').checked) checks.push('csp');
 
   if (checks.length === 0) {
       showNotification('Please select at least one check to perform', 'warning');
@@ -184,7 +185,8 @@ async function validateDomains() {
             (result.ssl.skipped || !result.ssl.success) && 
             (result.cookies.skipped || !result.cookies.success) && 
             (!result.hsts || result.hsts.skipped || !result.hsts.success) &&
-            (!result.ssl.skipped || !result.cookies.skipped || !result.hsts.skipped); // Make sure we didn't just skip everything
+            (!result.csp || result.csp.skipped || !result.csp.success) &&
+            (!result.ssl.skipped || !result.cookies.skipped || !result.hsts.skipped || !result.csp.skipped); // Make sure we didn't just skip everything
           
           if (isDown) {
             showNotification(`[Failed] Cannot access ${domain}`, 'error');
@@ -234,7 +236,8 @@ function renderResults() {
       (result.ssl.skipped || !result.ssl.success) && 
       (result.cookies.skipped || !result.cookies.success) && 
       (!result.hsts || result.hsts.skipped || !result.hsts.success) &&
-      (!result.ssl.skipped || !result.cookies.skipped || (!result.hsts || !result.hsts.skipped));
+      (!result.csp || result.csp.skipped || !result.csp.success) &&
+      (!result.ssl.skipped || !result.cookies.skipped || (!result.hsts || !result.hsts.skipped) || (!result.csp || !result.csp.skipped));
     
     if (isDown) {
       const errorMsg = result.ssl.error || result.cookies.error || (result.hsts && result.hsts.error) || 'Failed to connect to the domain.';
@@ -284,6 +287,7 @@ function renderResults() {
         ${result.ssl && !result.ssl.skipped ? renderSSLSection(result.ssl) : ''}
         ${result.cookies && !result.cookies.skipped ? renderCookieSection(result.cookies) : ''}
         ${result.hsts && !result.hsts.skipped ? renderHSTSSection(result.hsts) : ''}
+        ${result.csp && !result.csp.skipped ? renderCSPSection(result.csp) : ''}
       </div>
     </div>
     `;
@@ -451,6 +455,59 @@ function renderHSTSSection(hsts) {
             <div class="detail-row">
               <span class="detail-label">Error</span>
               <span class="detail-value">${escapeHtml(hsts.message || hsts.error || 'Unknown error')}</span>
+            </div>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+// Render CSP section
+function renderCSPSection(csp) {
+  const severityClass = csp.severity || 'error';
+
+  return `
+    <div class="check-section collapsed">
+      <div class="check-title" onclick="toggleSection(this)">
+        <div class="check-title-content">
+          <i class="fa-solid fa-shield-virus"></i> Content-Security-Policy
+          <span class="status-badge ${severityClass}">${csp.status || 'Unknown'}</span>
+        </div>
+        <span class="check-toggle"><i class="fa-solid fa-chevron-down"></i></span>
+      </div>
+      <div class="check-details-wrapper">
+        ${csp.success ? `
+          <div class="check-details">
+            <div class="detail-row">
+              <span class="detail-label">Enabled</span>
+              <span class="detail-value">${csp.enabled ? 'Yes' : 'No'}</span>
+            </div>
+            ${csp.details && csp.details.raw ? `
+              <div class="detail-row" style="flex-direction: column; align-items: flex-start; gap: 0.5rem; text-align: left;">
+                <span class="detail-label">Raw Policy</span>
+                <span class="detail-value" style="display: block; text-align: left; background: var(--bg-primary); padding: 0.5rem; word-break: break-all; width: 100%; border: 1px solid var(--border-color-subtle); border-radius: var(--border-radius); margin-top: 0.5rem; font-size: 0.75rem;">${escapeHtml(csp.details.raw)}</span>
+              </div>
+            ` : ''}
+            <div class="detail-row">
+              <span class="detail-label">Message</span>
+              <span class="detail-value">${escapeHtml(csp.message)}</span>
+            </div>
+          </div>
+          ${csp.details && csp.details.issues && csp.details.issues.length > 0 ? `
+            <div class="issue-list">
+              ${csp.details.issues.map(issue => `
+                <div class="issue-item">
+                  <div class="issue-cookie"><i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> ${escapeHtml(issue)}</div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        ` : `
+          <div class="check-details">
+            <div class="detail-row">
+              <span class="detail-label">Error</span>
+              <span class="detail-value">${escapeHtml(csp.message || csp.error || 'Unknown error')}</span>
             </div>
           </div>
         `}

@@ -67,7 +67,7 @@
 
           <div class="input-group">
             <label class="input-label">Select Checks</label>
-            <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; background: var(--bg-primary); border: 2px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius);">
+            <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; background: var(--bg-primary); border: 2px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius); flex-wrap: wrap;">
               <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
                 <input type="checkbox" id="checkSsl" value="ssl" checked style="width: 1.2rem; height: 1.2rem; accent-color: var(--text-primary);">
                 <span>SSL Certificate</span>
@@ -79,6 +79,10 @@
               <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
                 <input type="checkbox" id="checkHsts" value="hsts" checked style="width: 1.2rem; height: 1.2rem; accent-color: var(--text-primary);">
                 <span>HSTS Header</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+                <input type="checkbox" id="checkCsp" value="csp" checked style="width: 1.2rem; height: 1.2rem; accent-color: var(--text-primary);">
+                <span>CSP (XSS Prevention)</span>
               </label>
             </div>
           </div>

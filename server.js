@@ -5,6 +5,7 @@ const path = require('path');
 const { checkSSL } = require('./validators/ssl-checker');
 const { checkCookies } = require('./validators/cookie-checker');
 const { checkHSTS } = require('./validators/hsts-checker');
+const { checkCSP } = require('./validators/csp-checker');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,11 +23,12 @@ app.get('/api/health', (req, res) => {
     res.json({
         status: 'ok',
         message: 'Vulnerability Validator API is running',
-        version: '1.1.0',
+        version: '1.2.0',
         validators: {
             ssl: 'enabled',
             cookies: 'enabled - case-insensitive detection',
-            hsts: 'enabled - case-insensitive detection'
+            hsts: 'enabled - case-insensitive detection',
+            csp: 'enabled - detecting weak directives'
         }
     });
 });
@@ -64,6 +66,20 @@ app.get('/api/check-hsts/:domain', async (req, res) => {
     try {
         const domain = req.params.domain;
         const result = await checkHSTS(domain);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Check CSP for a single domain
+app.get('/api/check-csp/:domain', async (req, res) => {
+    try {
+        const domain = req.params.domain;
+        const result = await checkCSP(domain);
         res.json(result);
     } catch (error) {
         res.status(500).json({
@@ -129,7 +145,7 @@ app.post('/api/validate', async (req, res) => {
             });
         }
 
-        const runChecks = checks || ['ssl', 'cookies', 'hsts'];
+        const runChecks = checks || ['ssl', 'cookies', 'hsts', 'csp'];
         const results = [];
 
         for (const domain of domains) {
@@ -143,6 +159,9 @@ app.post('/api/validate', async (req, res) => {
             }
             if (runChecks.includes('hsts')) {
                 checksToRun.push(checkHSTS(domain).then(res => ({ type: 'hsts', data: res })));
+            }
+            if (runChecks.includes('csp')) {
+                checksToRun.push(checkCSP(domain).then(res => ({ type: 'csp', data: res })));
             }
 
             const checkResults = await Promise.all(checksToRun);
@@ -159,6 +178,7 @@ app.post('/api/validate', async (req, res) => {
             if (!runChecks.includes('ssl')) domainResult.ssl = { success: null, skipped: true };
             if (!runChecks.includes('cookies')) domainResult.cookies = { success: null, skipped: true };
             if (!runChecks.includes('hsts')) domainResult.hsts = { success: null, skipped: true };
+            if (!runChecks.includes('csp')) domainResult.csp = { success: null, skipped: true };
 
             results.push(domainResult);
         }

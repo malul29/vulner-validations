@@ -1,176 +1,119 @@
-# Security Validator
-A web application to validate security vulnerabilities across multiple domains, specifically checking SSL certificate expiration and cookie security configurations.
+﻿# Vulner-Validator
+Aplikasi web untuk memeriksa keamanan domain dengan fokus pada validasi sertifikat SSL dan konfigurasi keamanan cookie.
 
-## Features
+## Fitur Utama
 
-- ✅ **SSL Certificate Validation**
-  - Check certificate expiration dates
-  - Calculate days until expiration
-  - Severity levels (OK, Warning, Critical)
-  - Detailed certificate information
+- ✅ **Validasi SSL**
+  - Periksa tanggal kedaluwarsa sertifikat
+  - Hitung hari tersisa hingga kedaluwarsa
+  - Penilaian tingkat keparahan (OK, Warning, Critical)
+  - Tampilkan informasi issuer dan validitas
 
-- ✅ **Cookie Security Analysis**
-  - Detect missing Secure flags
-  - Check for HttpOnly attributes
-  - Verify SameSite settings
-  - Identify non-compliant cookies
+- ✅ **Analisis Keamanan Cookie**
+  - Deteksi cookie tanpa atribut `Secure`
+  - Periksa flag `HttpOnly`
+  - Verifikasi pengaturan `SameSite`
+  - Laporkan cookie yang tidak patuh
 
-- ✅ **Batch Processing**
-  - Validate multiple domains simultaneously
-  - Progress tracking
-  - Real-time results display
+- ✅ **Pemrosesan Batch**
+  - Validasi banyak domain sekaligus
+  - Tampilkan hasil secara real-time
+  - Ekspor hasil ke format JSON
 
-- ✅ **Modern UI/UX**
-  - Dark theme with glassmorphism
-  - Smooth animations and transitions
-  - Responsive design
-  - Export results to JSON
+## Instalasi
 
-## Installation
-
-1. **Clone or navigate to the project directory:**
+1. Masuk ke direktori proyek:
    ```bash
-   cd Security-Validator
+   cd Vulner-Validator-main
    ```
 
-2. **Install dependencies:**
+2. Instal dependensi:
    ```bash
    npm install
    ```
 
-## Usage
+## Cara Pemakaian
 
-1. **Start the server:**
+1. Jalankan server:
    ```bash
    npm start
    ```
 
-2. **Open your browser:**
-   Navigate to `http://localhost:3000`
+2. Buka browser dan kunjungi:
+   ```text
+   http://localhost:3000
+   ```
 
-3. **Add domains:**
-   - Enter domain names (e.g., `google.com` or `https://example.com`)
-   - Click "Add Domain" or press Enter
-   - Add as many domains as needed
+3. Tambahkan domain yang ingin diperiksa:
+   - Masukkan nama domain, seperti `google.com` atau `https://example.com`
+   - Klik tombol "Add Domain" atau tekan Enter
 
-4. **Validate:**
-   - Click "Validate All Domains"
-   - Wait for the validation to complete
-   - Review the detailed results
+4. Jalankan validasi:
+   - Klik "Validate All Domains"
+   - Tunggu hingga proses selesai
+   - Tinjau hasil yang muncul
 
-5. **Export results:**
-   - Click "Export Results (JSON)" to download the validation data
+5. Ekspor hasil (jika tersedia):
+   - Unduh hasil pemeriksaan dalam format JSON
 
 ## API Endpoints
 
 ### Health Check
-```
+```http
 GET /api/health
 ```
 
-### Check SSL Certificate
-```
+### SSL Certificate Check
+```http
 GET /api/check-ssl/:domain
 ```
 
-### Check Cookie Security
-```
+### Cookie Security Check
+```http
 GET /api/check-cookies/:domain
 ```
 
 ### Batch Validation
-```
+```http
 POST /api/validate
+Content-Type: application/json
 Body: { "domains": ["example.com", "google.com"] }
 ```
 
-## Technology Stack
+## Teknologi
 
 - **Backend:** Node.js, Express
-- **Frontend:** Vanilla JavaScript, HTML5, CSS3
-- **Dependencies:**
-  - `express` - Web server framework
-  - `cors` - Cross-origin resource sharing
-  - `ssl-checker` - SSL certificate validation
-  - `axios` - HTTP client
-  - `helmet` - Security headers
+- **Frontend:** HTML, CSS, JavaScript
+- **Dependensi:**
+  - `express`
+  - `cors`
+  - `ssl-checker`
+  - `axios`
+  - `helmet`
 
-## Configuration
+## Konfigurasi
 
-Default port: `3000`
+Aplikasi berjalan pada port default `3000`.
 
-To change the port, set the `PORT` environment variable:
+Untuk menggunakan port lain:
 ```bash
 PORT=8080 npm start
 ```
 
-## 🚀 Deployment
-
-This application can be deployed to various platforms:
-
-### 🐳 Docker (Recommended)
-Containerized deployment for maximum portability and consistency.
-
-```bash
-# Build and run with Docker Compose
-docker compose up -d
-
-# Or with Docker directly
-docker build -t vulner-validator .
-docker run -d -p 3000:3000 vulner-validator
-```
-
-📖 **Full guide:** [`DEPLOY_DOCKER.md`](DEPLOY_DOCKER.md)
-
-### ☁️ Heroku
-Easy cloud deployment with automatic SSL.
-
-```bash
-heroku create
-git push heroku main
-heroku open
-```
-
-📖 **Full guide:** [`DEPLOY_HEROKU.md`](DEPLOY_HEROKU.md)
-
-### 🖥️ VPS (Linux)
-Deploy on your own VPS with PM2 and Nginx.
-
-```bash
-git clone https://github.com/malul29/Vulner-Validator.git
-cd Vulner-Validator
-npm install --production
-pm2 start ecosystem.config.js
-```
-
-📖 **Full guide:** [`DEPLOY_VPS.md`](DEPLOY_VPS.md)
-
-**Choose based on your needs:**
-- **Docker** → Maximum portability, run anywhere
-- **Heroku** → Fastest setup, free tier available
-- **VPS** → Full control, cost-effective for production
-
-
-## Security Checks
+## Pemeriksaan Keamanan
 
 ### SSL Certificate
-- ✅ Days until expiration
-- ✅ Certificate validity period
-- ✅ Issuer information
-- ✅ Automatic severity assessment
+- ✅ Tanggal kedaluwarsa
+- ✅ Sisa hari validitas
+- ✅ Informasi issuer
+- ✅ Status keparahan
 
 ### Cookie Security
-- ✅ Secure flag presence
-- ✅ HttpOnly flag presence
-- ✅ SameSite attribute
-- ✅ Per-cookie issue reporting
+- ✅ Atribut `Secure`
+- ✅ Atribut `HttpOnly`
+- ✅ Atribut `SameSite`
+- ✅ Laporan masalah per cookie
 
-## Browser Compatibility
-
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-
-## License
+## Lisensi
 
 MIT

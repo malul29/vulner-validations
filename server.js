@@ -7,6 +7,7 @@ const { checkCookies } = require('./validators/cookie-checker');
 const { checkHSTS } = require('./validators/hsts-checker');
 const { checkCSP } = require('./validators/csp-checker');
 
+const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -147,9 +148,25 @@ app.post('/api/validate', async (req, res) => {
 
         const runChecks = checks || ['ssl', 'cookies', 'hsts', 'csp'];
         const results = [];
+        const https = require('https');
 
         for (const domain of domains) {
             const checksToRun = [];
+            
+            // Get HTTP Status Code
+            let statusCode = 'Unknown';
+            try {
+                let url = domain.startsWith('http') ? domain : `https://${domain}`;
+                const response = await axios.get(url, {
+                    timeout: 5000,
+                    validateStatus: () => true,
+                    maxRedirects: 3,
+                    httpsAgent: new https.Agent({ rejectUnauthorized: false })
+                });
+                statusCode = response.status;
+            } catch (err) {
+                statusCode = err.code || 'Error';
+            }
             
             if (runChecks.includes('ssl')) {
                 checksToRun.push(checkSSL(domain).then(res => ({ type: 'ssl', data: res })));
@@ -168,6 +185,7 @@ app.post('/api/validate', async (req, res) => {
             
             const domainResult = {
                 domain: domain,
+                statusCode: statusCode,
                 timestamp: new Date().toISOString()
             };
             

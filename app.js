@@ -276,7 +276,10 @@ function renderResults() {
     <div class="result-card collapsed">
       <div class="result-header" onclick="toggleDomain(this)">
         <div class="result-header-content">
-          <div class="result-domain"><i class="fa-solid fa-globe"></i> ${escapeHtml(result.domain)}</div>
+          <div class="result-domain">
+            <i class="fa-solid fa-globe"></i> ${escapeHtml(result.domain)}
+            <span style="font-size: 0.75rem; font-weight: 800; background: ${result.statusCode >= 200 && result.statusCode < 400 ? 'var(--accent-success, #006400)' : (result.statusCode >= 400 && result.statusCode < 500 ? 'var(--accent-warning, #b8860b)' : 'var(--accent-danger, #8b0000)')}; color: #fff; padding: 0.2rem 0.5rem; margin-left: 0.5rem; border: 2px solid var(--border-color); border-radius: 4px;">HTTP ${result.statusCode}</span>
+          </div>
         </div>
         <div style="display: flex; align-items: center; gap: 1rem;">
           <div class="result-timestamp">Checked: ${new Date(result.timestamp).toLocaleString()}</div>
